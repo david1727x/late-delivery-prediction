@@ -1,93 +1,59 @@
 # Late Delivery Prediction with Machine Learning
 
-Machine Learning project focused on predicting late deliveries from operational production data using Python.
+[Español](README_ES.md) | **English**
 
-The project covers the complete workflow from exploratory data analysis and preprocessing to feature engineering, model comparison, interpretation, and prediction on unseen data.
+Machine Learning project focused on identifying production orders at risk of late delivery using operational data and interpretable linear classification models.
+
+Built with **Python, Pandas, NumPy, Scikit-learn, Matplotlib, and Seaborn**.
+
+> This project was developed as an academic Machine Learning case study in the Data Science program at Universidad de La Sabana. It is presented as a portfolio project to demonstrate data preprocessing, exploratory analysis, feature engineering, classification, model comparison, and interpretation skills.
 
 ## Business Problem
 
-Late deliveries can affect customer satisfaction, operational efficiency, and production planning.
+Late deliveries can affect customer satisfaction, production planning, and operational efficiency. The objective of this project is to analyze operational variables associated with delivery delays and build a classification workflow for identifying orders with higher late-delivery risk.
 
-The objective of this project is to analyze operational variables associated with delivery delays and develop a classification model capable of identifying orders at risk of being delivered late.
+The target variable is `entrega_tardia`:
 
-The target variable is:
-
-`entrega_tardia`
-
-- `0`: Order delivered on time
-- `1`: Order delivered late
+- `0`: order delivered on time
+- `1`: order delivered late
 
 ## Dataset
 
-The project uses two datasets:
+The original academic case uses:
 
-- `datos_entrenamiento_proyecto.csv`: training dataset containing 1,800 orders and the target variable.
-- `datos_testeo_estudiantes_sin_target.csv`: test dataset containing 600 orders without the target variable.
+- A labeled training dataset with **1,800 production orders** and 22 columns including the target.
+- An unlabeled dataset with **600 orders** and 21 predictor columns for final prediction.
 
-The training dataset contains operational information related to production conditions, workload, capacity, scheduling, product characteristics, and other variables associated with the delivery process.
+The labeled target distribution is:
 
-### Target Distribution
+- **1,146 on-time orders (63.7%)**
+- **654 late orders (36.3%)**
 
-The target variable is moderately imbalanced:
+Because the classes are moderately imbalanced, the analysis considers Recall, F1-score, and Balanced Accuracy in addition to overall Accuracy.
 
-- 63.7% of orders were delivered on time.
-- 36.3% of orders were delivered late.
-
-Because of this imbalance, model evaluation does not rely exclusively on Accuracy.
-
-Metrics such as Recall, F1-score, and Balanced Accuracy are also considered.
+> The original CSV files are not currently included in this public repository. The repository currently contains the project notebook and documentation.
 
 ## Project Workflow
 
-The analysis follows an end-to-end Machine Learning workflow:
+The analysis covers:
 
 1. Data loading and structural inspection
 2. Data quality analysis
-3. Missing value treatment
-4. Duplicate analysis
-5. Outlier treatment
-6. Exploratory Data Analysis
-7. Categorical variable encoding
-8. Feature scaling
-9. Baseline model training
-10. Feature Engineering
-11. Model retraining and comparison
-12. Model interpretation
-13. Final model selection
-14. Prediction on unseen data
-
-## Exploratory Data Analysis
-
-Exploratory analysis was performed to understand how operational variables relate to late deliveries.
-
-The analysis included:
-
-- Target distribution
-- Delay rate by operational categories
-- Distribution of numerical variables by target
-- Correlation analysis
-- Operational workload analysis
-- Production capacity analysis
-- Scheduling and instability variables
-
-The purpose of the EDA was not only to visualize the dataset, but also to identify variables that could contribute to predicting delivery risk.
-
-## Data Preprocessing
-
-The preprocessing pipeline includes:
-
-- Missing value treatment
-- Outlier handling
-- Categorical encoding
-- Numerical feature scaling
-- Separation of predictors and target
-- Preparation of training and test datasets
-
-These transformations ensure that the data can be consistently used by the Machine Learning algorithms.
+3. Missing-value treatment
+4. Duplicate and outlier analysis
+5. Exploratory Data Analysis
+6. Categorical encoding and numerical scaling
+7. Baseline model training
+8. Feature Engineering
+9. Model retraining and comparison
+10. Confusion-matrix analysis
+11. Logistic Regression coefficient interpretation
+12. Final model selection
+13. Prediction of the 600 unlabeled orders
 
 ## Feature Engineering
 
-Six additional operational features were created to capture relationships that were not directly represented by the original variables:
+Six operational features were created to represent relationships not directly captured by the original variables:
 
 - `carga_por_operario`
 - `presion_cola_capacidad`
@@ -96,160 +62,113 @@ Six additional operational features were created to capture relationships that w
 - `riesgo_externo`
 - `degradacion_equipo`
 
-These variables represent relationships between workload, production capacity, personnel availability, operational instability, external risk, and equipment conditions.
+These variables combine information related to workload, production capacity, personnel availability, instability, external risk, and equipment condition.
 
-The models were evaluated both before and after Feature Engineering to measure its impact.
+An important result of the experiment is that **Feature Engineering did not improve every model or metric**. The engineered features were therefore treated as an experimental modeling alternative rather than automatically assumed to improve predictive performance.
 
-## Machine Learning Models
+## Models Evaluated
 
-Three classification algorithms were evaluated:
+Three linear classification approaches were compared:
 
-### Logistic Regression
+- Logistic Regression
+- Perceptron
+- Adaline
 
-Used as an interpretable linear classification model and as the final selected approach.
+Each model was analyzed with baseline features and after Feature Engineering.
 
-### Perceptron
+## Reported Experimental Metrics
 
-Used to evaluate a basic linear classification strategy.
+The notebook reports the following metrics for the baseline models:
 
-### Adaline
+| Model | Accuracy | Recall | F1-score | Balanced Accuracy |
+|---|---:|---:|---:|---:|
+| Logistic Regression | 69.39% | 69.27% | 62.18% | 69.36% |
+| Perceptron | 66.50% | 48.01% | 51.02% | 62.53% |
+| Adaline | 72.67% | 59.17% | 61.14% | 69.77% |
 
-Used as an additional linear learning algorithm for comparison.
+After Feature Engineering:
 
-Each model was evaluated under two scenarios:
+| Model | Accuracy | Recall | F1-score | Balanced Accuracy |
+|---|---:|---:|---:|---:|
+| Logistic Regression | 69.56% | 68.35% | 62.00% | 69.30% |
+| Perceptron | 57.67% | 59.48% | 50.52% | 58.06% |
+| Adaline | 73.11% | 59.79% | 61.77% | 70.25% |
 
-- Baseline features
-- Features after Feature Engineering
+### Evaluation limitation
 
-## Evaluation Metrics
+These values are **training-set metrics reported by the current notebook**, not held-out validation or unseen-test performance. They are useful for documenting the academic experiment, but they should not be interpreted as estimates of generalization performance.
 
-The models were compared using:
+A stronger production-oriented version of this project would use a stratified train/validation split or cross-validation, fit preprocessing only on training folds, evaluate model selection on validation data, and then refit the selected pipeline on all labeled observations before predicting the 600 unlabeled orders.
 
-- Accuracy
-- Precision
-- Recall
-- F1-score
-- Balanced Accuracy
+## Feature Engineering Comparison
 
-Recall was particularly relevant because failing to identify an order that will be delivered late can be operationally costly.
+For Logistic Regression, Feature Engineering changed the reported training metrics only slightly:
 
-Balanced Accuracy was also considered because the target variable is not perfectly balanced.
+| Metric | Baseline | Feature Engineering |
+|---|---:|---:|
+| Accuracy | 69.39% | 69.56% |
+| Recall | 69.27% | 68.35% |
+| F1-score | 62.18% | 62.00% |
+| Balanced Accuracy | 69.36% | 69.30% |
 
-## Model Comparison
+This is a useful modeling lesson: additional features do not necessarily produce better results. Feature Engineering should be evaluated empirically rather than assumed to improve a model.
 
-The project compares the performance of the three algorithms before and after Feature Engineering.
+## Final Model in the Academic Experiment
 
-This analysis showed that Feature Engineering did not improve every model equally.
+The notebook selects **Logistic Regression with Feature Engineering** based on the project's intended balance of Recall, F1-score, stability, and interpretability.
 
-Rather than selecting a model based on a single metric, the final decision considered:
+This choice is not presented as the model with the highest value for every metric. For example, Adaline records higher training Accuracy and Balanced Accuracy in the reported experiment.
 
-- Recall
-- F1-score
-- Balanced Accuracy
-- Stability
-- Interpretability
+Logistic Regression was favored because its coefficients also provide a direct way to inspect how operational variables contribute to the classification decision.
 
-## Final Model
+## Predictions on Unlabeled Orders
 
-Logistic Regression with Feature Engineering was selected as the final model because of its balance between predictive performance and interpretability.
+After model selection, the academic workflow generates predictions for **600 unlabeled orders**:
 
-Approximate performance:
+- **330 predicted on time**
+- **270 predicted late**
+- **45.0% predicted late-delivery rate**
 
-| Metric | Result |
-|---|---:|
-| Recall | 68.35% |
-| F1-score | 62.00% |
-| Balanced Accuracy | 69.30% |
-
-The project also analyzes the coefficients of the Logistic Regression model to understand which variables contribute most strongly to predictions.
-
-This makes the solution useful not only for prediction, but also for understanding operational risk factors.
-
-## Predictions
-
-After selecting the final model, predictions were generated for the 600 unseen orders contained in:
-
-`datos_testeo_estudiantes_sin_target.csv`
-
-The resulting predictions are exported as:
-
-`predicciones_test.csv`
+These are model predictions for records without known target labels and therefore are not an accuracy evaluation.
 
 ## Technologies
 
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Scikit-learn
-- Jupyter Notebook
+`Python` · `Pandas` · `NumPy` · `Scikit-learn` · `Matplotlib` · `Seaborn` · `Jupyter Notebook`
 
-## Repository Structure
+## Current Repository Structure
 
 ```text
 late-delivery-prediction/
-│
 ├── README.md
-├── requirements.txt
-├── .gitignore
-│
-├── notebooks/
-│   └── late_delivery_prediction.ipynb
-│
-├── data/
-│   ├── datos_entrenamiento_proyecto.csv
-│   └── datos_testeo_estudiantes_sin_target.csv
-│
-└── images/
-    ├── target_analysis.png
-    ├── exploratory_analysis.png
-    ├── model_comparison.png
-    ├── feature_importance.png
-    └── confusion_matrix.png
+├── README_ES.md
+└── Proyecto_corte2_corregido.ipynb
 ```
 
-## How to Run
+This structure reflects the repository as it currently exists. Future portfolio improvements can standardize the notebook filename and add environment/dependency documentation.
+
+## How to Explore the Project
 
 Clone the repository:
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/late-delivery-prediction.git
+git clone https://github.com/david1727x/late-delivery-prediction.git
+cd late-delivery-prediction
 ```
 
-Install the required dependencies:
+Open the notebook with Jupyter:
 
 ```bash
-pip install -r requirements.txt
+jupyter notebook Proyecto_corte2_corregido.ipynb
 ```
 
-Open Jupyter Notebook:
+The original academic datasets are required to reproduce the complete execution and are not currently included in the public repository.
 
-```bash
-jupyter notebook
-```
+## Skills Demonstrated
 
-Then execute:
-
-```text
-notebooks/late_delivery_prediction.ipynb
-```
-
-## Key Takeaways
-
-This project demonstrates an end-to-end Machine Learning workflow applied to an operational classification problem.
-
-Beyond training models, the analysis focuses on understanding the data, creating meaningful operational features, comparing multiple algorithms, selecting appropriate evaluation metrics, and interpreting the final model.
-
-The project highlights the importance of evaluating Machine Learning models according to the business problem rather than relying exclusively on overall Accuracy.
+`Machine Learning` · `Python` · `Data Analysis` · `Data Preprocessing` · `Feature Engineering` · `Logistic Regression` · `Classification` · `Model Interpretation` · `Data Visualization`
 
 ## Author
 
-**David Santiago Cifuentes Grimaldo**
-
+**David Santiago Cifuentes Grimaldo**  
 Data Science Student  
 Universidad de La Sabana
-
-Skills demonstrated in this project:
-
-`Python` · `Machine Learning` · `Data Analysis` · `Data Preprocessing` · `Feature Engineering` · `Logistic Regression` · `Data Visualization`
